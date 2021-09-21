@@ -69,6 +69,7 @@ contract YannikSood is ERC721, Ownable {
         require(msg.value >= bestiePrice);
         require(yanniksFriends[whichFriend[msg.sender]].bestFriend == false);
         yanniksFriends[whichFriend[msg.sender]].bestFriend = true;
+        payable(yanniksWallet).transfer(msg.value);
     }
     
     //if i really fuck with you ill upgrade you to best friend status for free <3
