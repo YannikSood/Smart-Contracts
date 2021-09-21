@@ -13,9 +13,8 @@ contract YannikSood is ERC721, Ownable {
     using SafeMath32 for uint32;
     using SafeMath8 for uint8;
     
-    
+    //need to add more things to this struct. for now, we leave it with a name and a dream
     struct Friend {
-        uint256 traits;
         string name;
     }
     
@@ -27,6 +26,13 @@ contract YannikSood is ERC721, Ownable {
     
     address public constant yanniksWallet = 0xeB6b72e202123B401B0940F905f22097DEeb3ACa;
     
+    constructor() public ERC721("yanniksood", "YANNY") {
+        // mint the first friend for yannik
+        _safeMint(yanniksWallet, 1);
+        
+        // add it to the array
+        yanniksFriends.push(Friend("Yannik Sood"));
+    }
     
     //mint a friend. only one per wallet
     function mintFriend(string friendName) public payable {
@@ -34,20 +40,18 @@ contract YannikSood is ERC721, Ownable {
         //do our checks. make sure whoever wants to be my friend isnt already a friend & isnt broke
         require(friendsInWallet[msg.sender] == 0);
         require(msg.value >= price);
-        
-        //create a random sequence for our friend based on the name, to be used for traits. similar to cryptozombies
-        
-        //ddd the friend to my list of friends
-        yanniksFriends.push(friendName, 123);
+    
+        //add the friend to my list of friends
+        yanniksFriends.push(Friend(friendName));
         
         //now that we are friends, you can't be my friend again. sorry.
         friendsInWallet[msg.sender] = friendsInWallet[msg.sender].add(1);
         
+        //mint the token
+        _safeMint(msg.sender, yanniksFriends.length - 1);
+        
+        //pay me. my friendship is valuable
+        payable(yanniksWallet).transfer(msg.value);
     }
     
-    function generateFriendTraits(string friendName) private returns (uint256) {
-        uint traits = uint(keccak256(abi.encodePacked(friendName)));
-        
-        
-    }
 }
