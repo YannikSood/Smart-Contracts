@@ -20,10 +20,13 @@ contract AllInclusive is ERC721, Ownable {
     address[] rsvpList;
     
     bool public rsvpOpen = true;
+    bool public upgradesAvailable = true;
     uint256 public ticketPrice = 0.2 ether;
+    uint256 public upgradePrice = 0.1 ether;
     uint numTix = 0;
     
     mapping(address => uint8) public ticketHolders;
+    mapping(address => uint8) public ticketLevel;
     
     address public vaultWallet = 0xe000000000000000000000000000000000000000;
     
@@ -47,6 +50,19 @@ contract AllInclusive is ERC721, Ownable {
         //this person has rsvp'd, they are good.
         rsvpList.push(msg.sender);
         tickerHolders[msg.sender] = 1;
+        ticketLevel[msg.sender] = 1;
+    }
+    
+    //use this function to upgrade your ticket, in case you want more stuff covered for the trip
+    function upgradeTicket() public payable {
+        require(checkGuestList(msg.sender) == true);
+        require(upgradesAvailable == true);
+        require(ticketHolders[msg.sender] == 1);
+        require(msg.value >= upgradePrice, "ahh ok nice, you good, pay here");
+        
+        payable(vaultWallet).transfer(msg.value);
+        
+        ticketLevel[msg.sender] = ticketLevel[msg.sender].add(1);
     }
     
     //Check to see if an address is in a guest list. 
@@ -72,6 +88,7 @@ contract AllInclusive is ERC721, Ownable {
         guestList.push(addy);
         return true;
     }
+    
     
     
 }
