@@ -89,6 +89,15 @@ contract AllInclusive is ERC721, Ownable {
         return true;
     }
     
+    //stop allowing rsvps
+    function changeRSVPstatus(bool rsvp) public onlyOwner {
+        rsvpOpen = rsvp;
+    }
+    
+    //stop allowing upgrades
+    function changeRSVPstatus(bool upgrades) public onlyOwner {
+        upgradesAvailable = upgrades;
+    }
     
     
 }
